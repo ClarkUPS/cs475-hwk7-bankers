@@ -5,14 +5,16 @@
 #include "vector.h"
 #include "banker.h"
 
-int **allocated;
-int **maximum;
-int *vector;
+int **allocated; //inintal allocated read form txt file
+int **maximum; //inital maximum read from txt file
+int **need; //need calculated from max - allocated
+
+int *vector; //Total resrouces / avalable resources
 
 int resourceTypes;
 int processCount;
 
-int next; 
+int next;
 
 
 int main(int argc, char *argv[])
@@ -56,6 +58,12 @@ int main(int argc, char *argv[])
     maximum[a] = (int *) malloc(sizeof (int) *resourceTypes);
   }
 
+  //Malloc for need matrix
+  need = (int **) malloc(sizeof (int *) *processCount);
+  for(int a = 0; a < processCount; a++){
+    need[a] = (int *) malloc(sizeof (int) *resourceTypes);
+  }
+
   //Malloc for vector
   vector = (int *) malloc(sizeof (int) * resourceTypes);
   
@@ -65,70 +73,56 @@ int main(int argc, char *argv[])
   }
 
   
-  //Set matrix variables
-  for (int i = 0; i < 2; i++)
-  {
+  //Set matrix variables by reading from file
+  for (int i = 0; i < 2; i++){
     for(int a = 0; a < processCount; a++){
       for(int b = 0; b < resourceTypes; b++){
         if(i < 1){
-          fscanf(text, "%d", &allocated[a][b]);
-        }else{
           fscanf(text, "%d", &maximum[a][b]);
+        }else{
+          fscanf(text, "%d", &allocated[a][b]);
         }
       }
     }
   }
   
-  printall(processCount, resourceTypes, allocated, maximum, vector);
+  printall(processCount, resourceTypes, allocated, maximum, need, vector);
+ 
+  //Calculate and populate need matrix:
+  subtractTwoMatrices(maximum, allocated, need, resourceTypes, processCount);
+  
+    //Sanity Checks
+  //Sanity check 1:
+  if(!checkTotal(vector, allocated, resourceTypes, processCount)){
+    printf("Integrity test failed: allocated resources exceed total resources: SC 1\n");
+
+    freeAll(allocated, maximum, need, vector, processCount);
+
+    return 0;
+
+    //Sanity check 2
+  }else if(!checkAllocated(need, resourceTypes,  processCount)){
+    printf("Integrity test failed: allocated resources exceed demand for Threads: SC 2\n");
     
+    freeAll(allocated, maximum, need, vector, processCount);
 
+    return 0;
+  }
+
+  //Convert total resrouces to avalable resrouces
+  vector = available(allocated, vector, resourceTypes, processCount);
+
+   // TODO: Run banker's safety algorithm
+  //int finish[] = {1,1,1,1,1};
+  //printf("Can finish test: %d\n", canFinish(finish, vector, need, processCount, resourceTypes));
   
+  isSafe(vector, allocated, need, resourceTypes, processCount);
+
+  //printall(processCount, resourceTypes, allocated, maximum, need, vector);
   
-  // srand(time(NULL));
-  // for(int a = 0; a < resourceTypes; a++){
-  //   vector[a] = rand() % 100;
-  // }
-
+  freeAll(allocated, maximum, need, vector, processCount); //Make sure to free up all resources before ending
   
-
-
-//REMOVE Tester
-  
-  // for(int a = 0; a < processCount; a++){
-  //   for(int b = 0; b < resourceTypes; b++){
-  //     allocated[a][b] = rand() % 100;
-  //   }
-  // }
-
-
-  // for(int a = 0; a < processCount; a++){
-  //   for(int b = 0; b < resourceTypes; b++){
-  //     printf("%d ", allocated[a][b]);
-  //   }
-  //   printf("\n");
-  // }
-
-// for(int a = 0; a < processCount; a++){
-//     for(int b = 0; b < resourceTypes; b++){
-
-//     }
-//   }
-
-  
-  
-
-  // do{
-  //   fscanf(text, "%d", &next);
-  //   printf("Next: %d,\n", next);
-  // }while(next != NULL);
-
-
-
   fclose(text);
-
-
-  // TODO: Run banker's safety algorithm
-
   return 0;
 }
 
