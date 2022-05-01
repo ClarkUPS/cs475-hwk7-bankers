@@ -9,13 +9,11 @@ int isSafe(int * available, int ** alloc, int **need, int resourceTypes, int pro
 
     int * work = cloneVector(available, resourceTypes);
     int finish[processCount]; 
+    
+    int processOrder[processCount];
+    int processOrderCount = 0;
+
     setFinish(finish, processCount);
-
-
-        printf("Inital Work: ");
-        for(int b = 0; b < resourceTypes; b++){
-        printf("%d ", work[b]);
-        }
 
     printf("Processes run order:\n");
     while(!unfinished(finish,processCount) && canFinish(finish, work, need, processCount, resourceTypes)){
@@ -27,69 +25,49 @@ int isSafe(int * available, int ** alloc, int **need, int resourceTypes, int pro
                 if(compareVector(work, need, a, resourceTypes)){
                    
                     addToAvailable(work, alloc, a, resourceTypes);
+                    processOrder[processOrderCount] = a;
+                    processOrderCount++;
                     finish[a] = 1;
-
-                    printf("new Work: ");
                     for(int b = 0; b < resourceTypes; b++){
-                        printf("%d ", work[b]);
+                        //printf("%d ", work[b]);
                     }
-                    printf(" process: %d\n", a);
-
                     break; //break out of for Loop
                 }
             }
-            //do again if equal one/cannot run
+        //do again if equal one/cannot run
         }
         
     }
     
     //Process pretends to run
-    printf("new Work");
-    for(int a = 0; a < resourceTypes; a++){
-        printf("%d ", work[a]);
-    }
 
+free(work); //Make sure to free back up the cloned work vector
 
 if(unfinished(finish,processCount)){
-    printf("Safe!\n");
-    return 1;
-}else{
-    printf("Not safe!\n");
-    return 0;
-}
-}
+    printf("Safe: ");
 
-
-
-/**
- * @brief Set the Finish vector to inital unfinished state:
- * 
- * @param finish 
- * @param processCount 
- */
-void setFinish(int finish[], int processCount){
     for(int a = 0; a < processCount; a++){
-        finish[a] = 0;
+        printf("T%d ", processOrder[a]);
     }
-} 
+    
+printf("\n");
 
-
-
-/**
- * @brief Checks to see if all process are complete
- * 
- * @param finished 
- * @param processCount 
- * @return int 
- */
-int unfinished(int finished[], int processCount){
+    return 0;
+}else{
+    printf("UNSAFE: ");
     for(int a = 0; a < processCount; a++){
-        if(finished[a] == 0){
-            return 0; //There must be at least one unfinished process
+        if(finish[a] == 0){
+            printf("T%d ", a);
         }
     }
-    return 1; //All process are complete
+    printf(" cannot finish\n");
+    return 0;
+ }
 }
+
+
+
+
 
 
 

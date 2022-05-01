@@ -25,4 +25,8 @@ void freeAll(int **allocated, int **maximum, int **need, int *vector, int proces
 
 int * available(int ** allocated, int * vector, int resourceTypes, int processCount);
 
+void setFinish(int finish[], int processCount);
+
+int unfinished(int finished[], int processCount);
+
 void printall(int processCount, int resourceTypes, int ** allocated, int ** maximum, int ** need, int * vector);

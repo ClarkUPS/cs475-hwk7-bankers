@@ -30,7 +30,6 @@ int main(int argc, char *argv[])
   char* file = argv[1];
   //strcat(file,".txt");
 
-  printf("file name input: %s\n",file); //REMOVE
   FILE *text; //Stores conetence of text file
 
    text = fopen(file,"r");
@@ -44,8 +43,7 @@ int main(int argc, char *argv[])
   //Get number of resouces/processes
   fscanf(text, "%d", &resourceTypes); //get/set resources types
   fscanf(text, "%d", &processCount); //get/set  process Count
-  printf("Rty: %d Pcnt: %d\n", resourceTypes,processCount);
-
+  
   //Malloc for process allocated
   allocated = (int **) malloc(sizeof (int *) *processCount);
   for(int a = 0; a < processCount; a++){
@@ -94,18 +92,16 @@ int main(int argc, char *argv[])
     //Sanity Checks
   //Sanity check 1:
   if(!checkTotal(vector, allocated, resourceTypes, processCount)){
-    printf("Integrity test failed: allocated resources exceed total resources: SC 1\n");
+    printf("Integrity test failed: allocated resources exceed total resources\n");
 
     freeAll(allocated, maximum, need, vector, processCount);
-
     return 0;
 
     //Sanity check 2
   }else if(!checkAllocated(need, resourceTypes,  processCount)){
-    printf("Integrity test failed: allocated resources exceed demand for Threads: SC 2\n");
+    printf("Integrity test failed: allocated resources exceed demand for Threads\n");
     
     freeAll(allocated, maximum, need, vector, processCount);
-
     return 0;
   }
 
@@ -113,12 +109,7 @@ int main(int argc, char *argv[])
   vector = available(allocated, vector, resourceTypes, processCount);
 
    // TODO: Run banker's safety algorithm
-  //int finish[] = {1,1,1,1,1};
-  //printf("Can finish test: %d\n", canFinish(finish, vector, need, processCount, resourceTypes));
-  
   isSafe(vector, allocated, need, resourceTypes, processCount);
-
-  //printall(processCount, resourceTypes, allocated, maximum, need, vector);
   
   freeAll(allocated, maximum, need, vector, processCount); //Make sure to free up all resources before ending
   

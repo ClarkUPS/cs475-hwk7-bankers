@@ -221,6 +221,38 @@ int * available(int ** allocated, int * vector, int resourceTypes, int processCo
 
 
 /**
+ * @brief Set the Finish vector to inital unfinished state:
+ * 
+ * @param finish 
+ * @param processCount 
+ */
+void setFinish(int finish[], int processCount){
+    for(int a = 0; a < processCount; a++){
+        finish[a] = 0;
+    }
+} 
+
+
+
+/**
+ * @brief Checks to see if all process are complete
+ * 
+ * @param finished 
+ * @param processCount 
+ * @return int 
+ */
+int unfinished(int finished[], int processCount){
+    for(int a = 0; a < processCount; a++){
+        if(finished[a] == 0){
+            return 0; //There must be at least one unfinished process
+        }
+    }
+    return 1; //All process are complete
+}
+
+
+
+/**
  * Prints all the working matrixies and vectors:
  * 
  * @param processCount 
@@ -253,13 +285,14 @@ for(int a = 0; a < processCount; a++){
     }
     printf("\n");
   }
-
-printf("\nNeed:\n");
-  for(int a = 0; a < processCount; a++){
-    for(int b = 0; b < resourceTypes; b++){
-      printf("%d ", need[a][b]);
-    }
-    printf("\n");
-  }
-  printf("=======\n");
+  printf("\n");
+  //Not needed in the final version
+// printf("\nNeed:\n");
+//   for(int a = 0; a < processCount; a++){
+//     for(int b = 0; b < resourceTypes; b++){
+//       printf("%d ", need[a][b]);
+//     }
+//     printf("\n");
+//   }
+//   printf("=======\n");
 }
