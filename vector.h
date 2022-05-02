@@ -21,7 +21,7 @@ void freeVector(int * work);
 
 void freeMatrix(int ** matrix, int processCount);
 
-void freeAll(int **allocated, int **maximum, int **need, int *vector, int processCount);
+void freeAll(int **allocated, int **maximum, int **need, int *vector, int processCount, int *availableResources);
 
 int * available(int ** allocated, int * vector, int resourceTypes, int processCount);
 

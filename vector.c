@@ -191,11 +191,12 @@ void freeMatrix(int ** matrix, int processCount){
 }
 
 
-void freeAll(int **allocated, int **maximum, int **need, int *vector, int processCount){
+void freeAll(int **allocated, int **maximum, int **need, int *vector, int processCount, int *availableResources){
     freeMatrix(allocated, processCount);
     freeMatrix(maximum, processCount);
     freeMatrix(need, processCount);
     freeVector(vector);
+    freeVector(availableResources);
 }
 
 

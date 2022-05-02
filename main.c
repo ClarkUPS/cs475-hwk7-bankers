@@ -10,6 +10,7 @@ int **maximum; //inital maximum read from txt file
 int **need; //need calculated from max - allocated
 
 int *vector; //Total resrouces / avalable resources
+int *availableResources; //avalable resrouces at the beginning
 
 int resourceTypes;
 int processCount;
@@ -36,9 +37,10 @@ int main(int argc, char *argv[])
 
    if(text == NULL){
      printf("text file %s does not exist\n",file);
-     fclose(text);
-     return 0;
+     return 0; //End program run here. No need to fclose as file was never opened
    }
+
+   
   
   //Get number of resouces/processes
   fscanf(text, "%d", &resourceTypes); //get/set resources types
@@ -64,6 +66,9 @@ int main(int argc, char *argv[])
 
   //Malloc for vector
   vector = (int *) malloc(sizeof (int) * resourceTypes);
+  
+  //Malloc avalableResources
+  availableResources = (int *) malloc(sizeof (int) * resourceTypes);
   
   //Get and set vector inital contence
   for(int a = 0; a < resourceTypes; a++){
@@ -94,24 +99,31 @@ int main(int argc, char *argv[])
   if(!checkTotal(vector, allocated, resourceTypes, processCount)){
     printf("Integrity test failed: allocated resources exceed total resources\n");
 
-    freeAll(allocated, maximum, need, vector, processCount);
+    freeAll(allocated, maximum, need, vector, processCount, availableResources);
     return 0;
 
     //Sanity check 2
   }else if(!checkAllocated(need, resourceTypes,  processCount)){
     printf("Integrity test failed: allocated resources exceed demand for Threads\n");
     
-    freeAll(allocated, maximum, need, vector, processCount);
+    freeAll(allocated, maximum, need, vector, processCount, availableResources);
     return 0;
   }
 
+  
+  availableResources = cloneVector(vector, resourceTypes);
   //Convert total resrouces to avalable resrouces
-  vector = available(allocated, vector, resourceTypes, processCount);
+  availableResources = available(allocated, availableResources, resourceTypes, processCount);
+
+  for(int a= 0; a < resourceTypes; a ++){
+    printf("%d ", availableResources[a]);
+  }
+
 
    // TODO: Run banker's safety algorithm
-  isSafe(vector, allocated, need, resourceTypes, processCount);
+  isSafe(availableResources, allocated, need, resourceTypes, processCount);
   
-  freeAll(allocated, maximum, need, vector, processCount); //Make sure to free up all resources before ending
+  freeAll(allocated, maximum, need, vector, processCount, availableResources); //Make sure to free up all resources before ending
   
   fclose(text);
   return 0;
